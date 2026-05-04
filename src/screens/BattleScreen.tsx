@@ -15,8 +15,10 @@ type BattleScreenProps = {
   episodeById: Record<string, Episode>;
   poolSize: number;
   mode: TournamentMode;
+  goldenVotesRemaining: number;
   historyLength: number;
   onVote: (winnerId: string) => void;
+  onGoldenVote: () => void;
   onUndo: () => void;
   onRestart: (poolSize?: number, mode?: TournamentMode) => void;
   onNewTournament: () => void;
@@ -27,8 +29,10 @@ export function BattleScreen({
   episodeById,
   poolSize,
   mode,
+  goldenVotesRemaining,
   historyLength,
   onVote,
+  onGoldenVote,
   onUndo,
   onRestart,
   onNewTournament,
@@ -86,6 +90,22 @@ export function BattleScreen({
         <Text style={styles.progressText}>
           {getProgressText(tournament)}
         </Text>
+
+        <TouchableOpacity
+          style={[
+            styles.goldenVoteButton,
+            goldenVotesRemaining === 0 && styles.disabled,
+          ]}
+          onPress={() => {
+            setIsConfirmingNewTournament(false);
+            onGoldenVote();
+          }}
+          disabled={goldenVotesRemaining === 0}
+        >
+          <Text style={styles.goldenVoteButtonText}>
+            Golden Vote ({goldenVotesRemaining} left)
+          </Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={[

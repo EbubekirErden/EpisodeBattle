@@ -10,6 +10,7 @@ export const colors = {
   subtle: "#727d8c",
 
   accent: "#f5b84b",
+  goldenVoteSurface: "#241d10",
   topAccent: "#60a5fa",
   topGlowSurface: "#10233f",
   bottomAccent: "#f97316",

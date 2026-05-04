@@ -1,6 +1,13 @@
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { ModeSelector } from "@/components/ModeSelector";
+import { PlayerSelector } from "@/components/PlayerSelector";
 import { PoolSelector } from "@/components/PoolSelector";
 import { styles } from "@/styles/appStyles";
 import { TournamentMode } from "@/tournament/types";
@@ -8,8 +15,11 @@ import { TournamentMode } from "@/tournament/types";
 type StartScreenProps = {
   poolSize: number;
   poolSizes: number[];
+  playerCount: number;
+  playerCounts: number[];
   mode: TournamentMode;
   onSelectPoolSize: (poolSize: number) => void;
+  onSelectPlayerCount: (playerCount: number) => void;
   onSelectMode: (mode: TournamentMode) => void;
   onPlay: () => void;
 };
@@ -17,8 +27,11 @@ type StartScreenProps = {
 export function StartScreen({
   poolSize,
   poolSizes,
+  playerCount,
+  playerCounts,
   mode,
   onSelectPoolSize,
+  onSelectPlayerCount,
   onSelectMode,
   onPlay,
 }: StartScreenProps) {
@@ -26,40 +39,58 @@ export function StartScreen({
 
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={styles.startHero}>
-        <Text style={styles.appTitle}>Episode Battle</Text>
-        <Text style={styles.startSubtitle}>
-          Choose your bracket, then let the impossible decisions begin.
-        </Text>
-      </View>
-
-      <View style={styles.setupPanel}>
-        <View style={styles.setupGroup}>
-          <Text style={styles.setupLabel}>Tournament Size</Text>
-          <PoolSelector
-            poolSizes={poolSizes}
-            selectedPoolSize={poolSize}
-            onSelectSize={onSelectPoolSize}
-          />
+      <ScrollView
+        contentContainerStyle={styles.startContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.startHero}>
+          <Text style={styles.appTitle}>Episode Battle</Text>
+          <Text style={styles.startSubtitle}>
+            Choose your bracket, then let the impossible decisions begin.
+          </Text>
         </View>
 
-        <View style={styles.setupGroup}>
-          <Text style={styles.setupLabel}>Mode</Text>
-          <ModeSelector selectedMode={mode} onSelectMode={onSelectMode} />
-          <View style={styles.modeInfoPanel}>
-            <Text style={styles.modeInfoText}>{getModeInfo(mode)}</Text>
+        <View style={styles.setupPanel}>
+          <View style={styles.setupGroup}>
+            <Text style={styles.setupLabel}>Tournament Size</Text>
+            <PoolSelector
+              poolSizes={poolSizes}
+              selectedPoolSize={poolSize}
+              onSelectSize={onSelectPoolSize}
+            />
+          </View>
+
+          <View style={styles.setupGroup}>
+            <Text style={styles.setupLabel}>Players</Text>
+            <PlayerSelector
+              playerCounts={playerCounts}
+              selectedPlayerCount={playerCount}
+              onSelectPlayerCount={onSelectPlayerCount}
+            />
+            <Text style={styles.setupHint}>
+              {playerCount} golden vote{playerCount === 1 ? "" : "s"}.
+              Use one to let both episodes survive a matchup.
+            </Text>
+          </View>
+
+          <View style={styles.setupGroup}>
+            <Text style={styles.setupLabel}>Mode</Text>
+            <ModeSelector selectedMode={mode} onSelectMode={onSelectMode} />
+            <View style={styles.modeInfoPanel}>
+              <Text style={styles.modeInfoText}>{getModeInfo(mode)}</Text>
+            </View>
+          </View>
+
+          <View style={styles.matchupEstimateBox}>
+            <Text style={styles.matchupEstimateLabel}>Estimated Matchups</Text>
+            <Text style={styles.matchupEstimateValue}>{matchupEstimate}</Text>
           </View>
         </View>
 
-        <View style={styles.matchupEstimateBox}>
-          <Text style={styles.matchupEstimateLabel}>Estimated Matchups</Text>
-          <Text style={styles.matchupEstimateValue}>{matchupEstimate}</Text>
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.playButton} onPress={onPlay}>
-        <Text style={styles.playButtonText}>Play Tournament</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.playButton} onPress={onPlay}>
+          <Text style={styles.playButtonText}>Play Tournament</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }

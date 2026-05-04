@@ -18,6 +18,10 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 
+  startContent: {
+    paddingBottom: 22,
+  },
+
   roundTitle: {
     color: colors.accent,
     fontSize: 15,
@@ -30,8 +34,8 @@ export const styles = StyleSheet.create({
   },
 
   startHero: {
-    marginTop: 56,
-    marginBottom: 34,
+    marginTop: 34,
+    marginBottom: 24,
     alignItems: "center",
   },
 
@@ -50,13 +54,13 @@ export const styles = StyleSheet.create({
     borderRadius: 26,
     borderWidth: 1,
     borderColor: colors.border,
-    paddingVertical: 24,
+    paddingVertical: 20,
     paddingHorizontal: 18,
-    gap: 22,
+    gap: 18,
   },
 
   setupGroup: {
-    gap: 12,
+    gap: 10,
   },
 
   setupLabel: {
@@ -66,6 +70,14 @@ export const styles = StyleSheet.create({
     letterSpacing: 1,
     textAlign: "center",
     textTransform: "uppercase",
+  },
+
+  setupHint: {
+    color: colors.subtle,
+    fontSize: 12,
+    fontWeight: "800",
+    textAlign: "center",
+    lineHeight: 17,
   },
 
   matchupEstimateBox: {
@@ -241,6 +253,20 @@ export const styles = StyleSheet.create({
 
   secondaryButtonText: {
     color: colors.text,
+    fontWeight: "900",
+  },
+
+  goldenVoteButton: {
+    borderWidth: 1,
+    borderColor: colors.accent,
+    paddingVertical: 10,
+    borderRadius: 14,
+    alignItems: "center",
+    backgroundColor: colors.goldenVoteSurface,
+  },
+
+  goldenVoteButtonText: {
+    color: colors.accent,
     fontWeight: "900",
   },
 

@@ -110,6 +110,35 @@ export function voteForWinner(
   return handleFinalVote(state, winnerId);
 }
 
+export function voteForGoldenAdvance(state: TournamentState): TournamentState {
+  const match = getCurrentMatch(state);
+
+  if (!match || state.phase === "results") {
+    return state;
+  }
+
+  if (state.phase === "final") {
+    return state;
+  }
+
+  const standings = applyGoldenAdvanceResult(
+    state.standings,
+    match.aId,
+    match.bId
+  );
+
+  const afterVoteState: TournamentState = {
+    ...state,
+    standings,
+  };
+
+  if (state.phase === "swiss") {
+    return advanceSwissMatch(afterVoteState);
+  }
+
+  return advanceEliminationMatch(afterVoteState);
+}
+
 function handleSwissVote(
   state: TournamentState,
   winnerId: string,
@@ -122,21 +151,25 @@ function handleSwissVote(
     standings,
   };
 
+  return advanceSwissMatch(afterVoteState);
+}
+
+function advanceSwissMatch(state: TournamentState): TournamentState {
   const nextMatchIndex = state.currentMatchIndex + 1;
 
   if (nextMatchIndex < state.currentMatches.length) {
     return {
-      ...afterVoteState,
+      ...state,
       currentMatchIndex: nextMatchIndex,
     };
   }
 
   if (state.currentRound >= state.maxSwissRounds) {
-    return startFinals(afterVoteState);
+    return startFinals(state);
   }
 
   const nextRoundState: TournamentState = {
-    ...afterVoteState,
+    ...state,
     currentRound: state.currentRound + 1,
     currentMatchIndex: 0,
   };
@@ -159,23 +192,27 @@ function handleEliminationVote(
     standings,
   };
 
+  return advanceEliminationMatch(afterVoteState);
+}
+
+function advanceEliminationMatch(state: TournamentState): TournamentState {
   const nextMatchIndex = state.currentMatchIndex + 1;
 
   if (nextMatchIndex < state.currentMatches.length) {
     return {
-      ...afterVoteState,
+      ...state,
       currentMatchIndex: nextMatchIndex,
     };
   }
 
-  const activeIds = getActiveEpisodeIds(afterVoteState);
+  const activeIds = getActiveEpisodeIds(state);
 
   if (activeIds.length <= 4) {
-    return startFinals(afterVoteState);
+    return startFinals(state);
   }
 
   const nextRoundState: TournamentState = {
-    ...afterVoteState,
+    ...state,
     currentRound: state.currentRound + 1,
     currentMatchIndex: 0,
   };
@@ -432,6 +469,19 @@ function applyMatchResult(
 
   copy[loserId].losses += 1;
   copy[loserId].opponents.push(winnerId);
+
+  return copy;
+}
+
+function applyGoldenAdvanceResult(
+  standings: Record<string, Standing>,
+  aId: string,
+  bId: string
+): Record<string, Standing> {
+  const copy = cloneStandings(standings);
+
+  copy[aId].opponents.push(bId);
+  copy[bId].opponents.push(aId);
 
   return copy;
 }
