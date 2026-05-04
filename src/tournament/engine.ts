@@ -19,6 +19,7 @@ export function createTournament(
   mode: TournamentMode
 ): TournamentState {
   const selectedEpisodes = [...episodes]
+    .filter(isPlayableEpisode)
     .sort((a, b) => b.seedScore - a.seedScore)
     .slice(0, poolSize);
 
@@ -446,4 +447,8 @@ function cloneStandings(
   }
 
   return copy;
+}
+
+function isPlayableEpisode(episode: Episode): boolean {
+  return Boolean(episode.image);
 }
