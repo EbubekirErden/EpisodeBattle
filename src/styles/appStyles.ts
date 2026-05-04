@@ -50,8 +50,13 @@ export const styles = StyleSheet.create({
     borderRadius: 26,
     borderWidth: 1,
     borderColor: colors.border,
-    padding: 18,
-    gap: 10,
+    paddingVertical: 24,
+    paddingHorizontal: 18,
+    gap: 22,
+  },
+
+  setupGroup: {
+    gap: 12,
   },
 
   setupLabel: {
@@ -59,7 +64,33 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "900",
     letterSpacing: 1,
+    textAlign: "center",
     textTransform: "uppercase",
+  },
+
+  matchupEstimateBox: {
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    alignItems: "center",
+  },
+
+  matchupEstimateLabel: {
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: "900",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
+
+  matchupEstimateValue: {
+    color: colors.accent,
+    fontSize: 28,
+    fontWeight: "900",
+    marginTop: 4,
   },
 
   poolSelector: {
@@ -67,7 +98,7 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 8,
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom: 0,
   },
 
   poolButton: {

@@ -22,6 +22,8 @@ export function StartScreen({
   onSelectMode,
   onPlay,
 }: StartScreenProps) {
+  const matchupEstimate = getMatchupEstimate(poolSize, mode);
+
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.startHero}>
@@ -32,15 +34,24 @@ export function StartScreen({
       </View>
 
       <View style={styles.setupPanel}>
-        <Text style={styles.setupLabel}>Tournament Size</Text>
-        <PoolSelector
-          poolSizes={poolSizes}
-          selectedPoolSize={poolSize}
-          onSelectSize={onSelectPoolSize}
-        />
+        <View style={styles.setupGroup}>
+          <Text style={styles.setupLabel}>Tournament Size</Text>
+          <PoolSelector
+            poolSizes={poolSizes}
+            selectedPoolSize={poolSize}
+            onSelectSize={onSelectPoolSize}
+          />
+        </View>
 
-        <Text style={styles.setupLabel}>Mode</Text>
-        <ModeSelector selectedMode={mode} onSelectMode={onSelectMode} />
+        <View style={styles.setupGroup}>
+          <Text style={styles.setupLabel}>Mode</Text>
+          <ModeSelector selectedMode={mode} onSelectMode={onSelectMode} />
+        </View>
+
+        <View style={styles.matchupEstimateBox}>
+          <Text style={styles.matchupEstimateLabel}>Estimated Matchups</Text>
+          <Text style={styles.matchupEstimateValue}>{matchupEstimate}</Text>
+        </View>
       </View>
 
       <TouchableOpacity style={styles.playButton} onPress={onPlay}>
@@ -48,4 +59,25 @@ export function StartScreen({
       </TouchableOpacity>
     </SafeAreaView>
   );
+}
+
+function getMatchupEstimate(
+  poolSize: number,
+  mode: TournamentMode
+): string {
+  if (mode === "swiss") {
+    const swissRounds = poolSize <= 16 ? 4 : 5;
+    const matchups = Math.floor(poolSize / 2) * swissRounds + 3;
+
+    return `${matchups}`;
+  }
+
+  const doubleDownEstimates: Record<number, string> = {
+    16: "31",
+    32: "63",
+    64: "126-128",
+    128: "254-256",
+  };
+
+  return doubleDownEstimates[poolSize] ?? "Depends on eliminations";
 }
