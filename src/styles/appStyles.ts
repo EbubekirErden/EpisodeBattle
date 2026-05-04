@@ -23,17 +23,51 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: "center",
     marginTop: 6,
-    marginBottom: 14,
+    marginBottom: 10,
     fontWeight: "800",
     letterSpacing: 0.8,
     textTransform: "uppercase",
   },
 
+  startHero: {
+    marginTop: 56,
+    marginBottom: 34,
+    alignItems: "center",
+  },
+
+  startSubtitle: {
+    color: colors.muted,
+    fontSize: 16,
+    lineHeight: 23,
+    textAlign: "center",
+    marginTop: 12,
+    maxWidth: 320,
+    fontWeight: "700",
+  },
+
+  setupPanel: {
+    backgroundColor: colors.surface,
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 18,
+    gap: 10,
+  },
+
+  setupLabel: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: "900",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
+
   poolSelector: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
     justifyContent: "center",
-    marginBottom: 14,
+    marginBottom: 10,
   },
 
   poolButton: {
@@ -65,9 +99,9 @@ export const styles = StyleSheet.create({
     borderRadius: 26,
     borderWidth: 1,
     borderColor: colors.border,
-    padding: 22,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 12,
+    justifyContent: "flex-start",
+    alignItems: "stretch",
 
     shadowColor: "#000",
     shadowOpacity: 0.25,
@@ -87,32 +121,45 @@ export const styles = StyleSheet.create({
     borderColor: colors.bottomAccent,
   },
 
-  cardLabel: {
-    color: colors.muted,
-    fontSize: 13,
-    fontWeight: "900",
-    letterSpacing: 1.6,
-    marginBottom: 18,
+  topCardSelected: {
+    backgroundColor: colors.topGlowSurface,
+    borderColor: colors.topAccent,
+    shadowColor: colors.topAccent,
+    shadowOpacity: 0.7,
+    shadowRadius: 22,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    elevation: 10,
+    transform: [{ scale: 0.985 }],
   },
 
-  topCardLabel: {
-    color: colors.topAccent,
-  },
-
-  bottomCardLabel: {
-    color: colors.bottomAccent,
+  bottomCardSelected: {
+    backgroundColor: colors.bottomGlowSurface,
+    borderColor: colors.bottomAccent,
+    shadowColor: colors.bottomAccent,
+    shadowOpacity: 0.7,
+    shadowRadius: 22,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    elevation: 10,
+    transform: [{ scale: 0.985 }],
   },
 
   episodeCode: {
     color: colors.text,
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "900",
-    marginBottom: 8,
+    marginBottom: 4,
+    textAlign: "center",
   },
 
   episodeTitle: {
     color: colors.text,
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: "900",
     textAlign: "center",
   },
@@ -127,8 +174,8 @@ export const styles = StyleSheet.create({
   },
 
   footer: {
-    marginTop: 14,
-    gap: 10,
+    marginTop: 10,
+    gap: 8,
   },
 
   progressText: {
@@ -167,6 +214,39 @@ export const styles = StyleSheet.create({
     color: colors.background,
     fontWeight: "900",
     fontSize: 16,
+  },
+
+  playButton: {
+    backgroundColor: colors.accent,
+    paddingVertical: 17,
+    borderRadius: 18,
+    alignItems: "center",
+    marginTop: 22,
+    shadowColor: colors.accent,
+    shadowOpacity: 0.35,
+    shadowRadius: 18,
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    elevation: 5,
+  },
+
+  playButtonText: {
+    color: colors.background,
+    fontWeight: "900",
+    fontSize: 17,
+    letterSpacing: 0.2,
+  },
+
+  ghostButton: {
+    paddingVertical: 8,
+    alignItems: "center",
+  },
+
+  ghostButtonText: {
+    color: colors.muted,
+    fontWeight: "900",
   },
 
   sectionTitle: {
@@ -242,7 +322,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
-    marginBottom: 14,
+    marginBottom: 0,
   },
 
   modeButton: {
@@ -268,17 +348,23 @@ export const styles = StyleSheet.create({
     color: colors.background,
   },
 
+  episodeImageFrame: {
+    flex: 1,
+    minHeight: 0,
+    borderRadius: 18,
+    marginBottom: 10,
+    backgroundColor: colors.surfaceElevated,
+    overflow: "hidden",
+  },
+
   episodeImage: {
     width: "100%",
-    height: "58%",
-    borderRadius: 18,
-    marginBottom: 14,
-    backgroundColor: colors.surfaceElevated,
+    height: "100%",
   },
 
   imagePlaceholder: {
     width: "100%",
-    height: "58%",
+    aspectRatio: 500 / 281,
     borderRadius: 18,
     marginBottom: 14,
     backgroundColor: colors.surfaceElevated,
@@ -296,5 +382,6 @@ export const styles = StyleSheet.create({
 
   cardTextBox: {
     alignItems: "center",
+    flexShrink: 0,
   },
 });

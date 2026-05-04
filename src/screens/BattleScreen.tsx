@@ -1,8 +1,6 @@
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
 import { EpisodeCard } from "@/components/EpisodeCard";
-import { ModeSelector } from "@/components/ModeSelector";
-import { PoolSelector } from "@/components/PoolSelector";
 import { styles } from "@/styles/appStyles";
 import { getCurrentMatch } from "@/tournament/engine";
 import {
@@ -15,24 +13,24 @@ type BattleScreenProps = {
   tournament: TournamentState;
   episodeById: Record<string, Episode>;
   poolSize: number;
-  poolSizes: number[];
   mode: TournamentMode;
   historyLength: number;
   onVote: (winnerId: string) => void;
   onUndo: () => void;
   onRestart: (poolSize?: number, mode?: TournamentMode) => void;
+  onNewTournament: () => void;
 };
 
 export function BattleScreen({
   tournament,
   episodeById,
   poolSize,
-  poolSizes,
   mode,
   historyLength,
   onVote,
   onUndo,
   onRestart,
+  onNewTournament,
 }: BattleScreenProps) {
   const currentMatch = getCurrentMatch(tournament);
 
@@ -60,20 +58,8 @@ export function BattleScreen({
       <Text style={styles.appTitle}>Episode Battle</Text>
       <Text style={styles.roundTitle}>{getTournamentTitle(tournament)}</Text>
 
-      <PoolSelector
-        poolSizes={poolSizes}
-        selectedPoolSize={poolSize}
-        onSelectSize={(nextPoolSize) => onRestart(nextPoolSize, mode)}
-      />
-
-      <ModeSelector
-        selectedMode={mode}
-        onSelectMode={(nextMode) => onRestart(poolSize, nextMode)}
-      />
-
       <EpisodeCard
         episode={topEpisode}
-        label="TOP"
         variant="top"
         onPress={() => onVote(topEpisode.id)}
       />
@@ -82,7 +68,6 @@ export function BattleScreen({
 
       <EpisodeCard
         episode={bottomEpisode}
-        label="BOTTOM"
         variant="bottom"
         onPress={() => onVote(bottomEpisode.id)}
       />
@@ -101,6 +86,10 @@ export function BattleScreen({
           disabled={historyLength === 0}
         >
           <Text style={styles.secondaryButtonText}>Undo</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.ghostButton} onPress={onNewTournament}>
+          <Text style={styles.ghostButtonText}>New Tournament</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

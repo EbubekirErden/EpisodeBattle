@@ -9,7 +9,9 @@ export const colors = {
 
   accent: "#f5b84b",
   topAccent: "#60a5fa",
+  topGlowSurface: "#10233f",
   bottomAccent: "#f97316",
+  bottomGlowSurface: "#321a10",
 
   danger: "#ef4444",
 };

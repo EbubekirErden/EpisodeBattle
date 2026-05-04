@@ -1,4 +1,4 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import { styles } from "@/styles/appStyles";
 import { Episode } from "@/tournament/types";
@@ -8,31 +8,38 @@ type EpisodeCardVariant = "top" | "bottom";
 
 type EpisodeCardProps = {
   episode: Episode;
-  label: string;
   variant: EpisodeCardVariant;
   onPress: () => void;
 };
 
 export function EpisodeCard({
   episode,
-  label,
   variant,
   onPress,
 }: EpisodeCardProps) {
   const cardVariantStyle =
     variant === "top" ? styles.topCard : styles.bottomCard;
 
-  const labelVariantStyle =
-    variant === "top" ? styles.topCardLabel : styles.bottomCardLabel;
+  const selectedCardStyle =
+    variant === "top" ? styles.topCardSelected : styles.bottomCardSelected;
 
   return (
-    <TouchableOpacity
-      style={[styles.card, cardVariantStyle]}
+    <Pressable
+      style={({ pressed }) => [
+        styles.card,
+        cardVariantStyle,
+        pressed && selectedCardStyle,
+      ]}
       onPress={onPress}
-      activeOpacity={0.85}
     >
       {episode.image ? (
-        <Image source={episode.image} style={styles.episodeImage} />
+        <View style={styles.episodeImageFrame}>
+          <Image
+            source={episode.image}
+            style={styles.episodeImage}
+            resizeMode="cover"
+          />
+        </View>
       ) : (
         <View style={styles.imagePlaceholder}>
           <Text style={styles.imagePlaceholderText}>
@@ -42,10 +49,18 @@ export function EpisodeCard({
       )}
 
       <View style={styles.cardTextBox}>
-        <Text style={[styles.cardLabel, labelVariantStyle]}>{label} WINS</Text>
-        <Text style={styles.episodeCode}>{formatEpisodeCode(episode)}</Text>
-        <Text style={styles.episodeTitle}>{episode.title}</Text>
+        <Text style={styles.episodeCode} numberOfLines={1}>
+          {formatEpisodeCode(episode)}
+        </Text>
+        <Text
+          style={styles.episodeTitle}
+          numberOfLines={2}
+          adjustsFontSizeToFit
+          minimumFontScale={0.82}
+        >
+          {episode.title}
+        </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
