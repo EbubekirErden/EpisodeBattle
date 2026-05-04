@@ -360,6 +360,7 @@ export const styles = StyleSheet.create({
 
   modeSelector: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
     justifyContent: "center",
     marginBottom: 0,
@@ -370,7 +371,7 @@ export const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 14,
     paddingVertical: 10,
-    paddingHorizontal: 18,
+    paddingHorizontal: 14,
     backgroundColor: colors.surface,
   },
 

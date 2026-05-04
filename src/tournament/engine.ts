@@ -7,6 +7,7 @@ import {
 } from "@/tournament/types";
 
 const DOUBLE_DOWN_LOSSES = 2;
+const KNOCKOUT_LOSSES = 1;
 
 function getMaxSwissRounds(poolSize: number): number {
   if (poolSize <= 16) return 4;
@@ -50,7 +51,7 @@ export function createTournament(
     maxSwissRounds: getMaxSwissRounds(actualPoolSize),
     currentRound: 1,
 
-    eliminationLosses: DOUBLE_DOWN_LOSSES,
+    eliminationLosses: getEliminationLosses(mode),
 
     episodeIds,
     standings,
@@ -69,7 +70,7 @@ export function createTournament(
     currentMatches:
       mode === "swiss"
         ? generateSwissMatches(initialState)
-        : generateDoubleDownMatches(initialState),
+        : generateEliminationMatches(initialState),
   };
 }
 
@@ -77,6 +78,7 @@ export function getCurrentMatch(state: TournamentState): Match | null {
   if (
     state.phase !== "swiss" &&
     state.phase !== "doubleDown" &&
+    state.phase !== "knockout" &&
     state.phase !== "final"
   ) {
     return null;
@@ -101,8 +103,8 @@ export function voteForWinner(
     return handleSwissVote(state, winnerId, loserId);
   }
 
-  if (state.phase === "doubleDown") {
-    return handleDoubleDownVote(state, winnerId, loserId);
+  if (state.phase === "doubleDown" || state.phase === "knockout") {
+    return handleEliminationVote(state, winnerId, loserId);
   }
 
   return handleFinalVote(state, winnerId);
@@ -145,7 +147,7 @@ function handleSwissVote(
   };
 }
 
-function handleDoubleDownVote(
+function handleEliminationVote(
   state: TournamentState,
   winnerId: string,
   loserId: string
@@ -178,7 +180,7 @@ function handleDoubleDownVote(
     currentMatchIndex: 0,
   };
 
-  const nextMatches = generateDoubleDownMatches(nextRoundState);
+  const nextMatches = generateEliminationMatches(nextRoundState);
 
   if (nextMatches.length === 0) {
     return startFinals(nextRoundState);
@@ -294,7 +296,7 @@ export function rankEpisodes(state: TournamentState): string[] {
     const aActive = isActiveEpisode(state, aId);
     const bActive = isActiveEpisode(state, bId);
 
-    if (state.mode === "doubleDown" && aActive !== bActive) {
+    if (isEliminationMode(state.mode) && aActive !== bActive) {
       return aActive ? -1 : 1;
     }
 
@@ -318,7 +320,7 @@ function generateSwissMatches(state: TournamentState): Match[] {
   return pairEpisodeIds(sortedIds, state);
 }
 
-function generateDoubleDownMatches(state: TournamentState): Match[] {
+function generateEliminationMatches(state: TournamentState): Match[] {
   const activeIds = getActiveEpisodeIds(state);
 
   const sortedActiveIds = activeIds.sort((aId, bId) => {
@@ -441,7 +443,7 @@ function getActiveEpisodeIds(state: TournamentState): string[] {
 }
 
 function isActiveEpisode(state: TournamentState, episodeId: string): boolean {
-  if (state.mode !== "doubleDown") return true;
+  if (!isEliminationMode(state.mode)) return true;
 
   return state.standings[episodeId].losses < state.eliminationLosses;
 }
@@ -473,6 +475,16 @@ function cloneStandings(
 
 function isPlayableEpisode(episode: Episode): boolean {
   return Boolean(episode.image);
+}
+
+function getEliminationLosses(mode: TournamentMode): number {
+  if (mode === "knockout") return KNOCKOUT_LOSSES;
+
+  return DOUBLE_DOWN_LOSSES;
+}
+
+function isEliminationMode(mode: TournamentMode): boolean {
+  return mode === "doubleDown" || mode === "knockout";
 }
 
 function shuffleEpisodes(episodes: Episode[]): Episode[] {

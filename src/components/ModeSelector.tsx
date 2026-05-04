@@ -34,6 +34,23 @@ export function ModeSelector({
       <TouchableOpacity
         style={[
           styles.modeButton,
+          selectedMode === "knockout" && styles.modeButtonActive,
+        ]}
+        onPress={() => onSelectMode("knockout")}
+      >
+        <Text
+          style={[
+            styles.modeButtonText,
+            selectedMode === "knockout" && styles.modeButtonTextActive,
+          ]}
+        >
+          Knockout
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[
+          styles.modeButton,
           selectedMode === "doubleDown" && styles.modeButtonActive,
         ]}
         onPress={() => onSelectMode("doubleDown")}

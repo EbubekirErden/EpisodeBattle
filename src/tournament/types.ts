@@ -13,7 +13,7 @@ export type Episode = {
   image?: ImageSourcePropType;
 };
 
-export type TournamentMode = "swiss" | "doubleDown";
+export type TournamentMode = "swiss" | "doubleDown" | "knockout";
 
 export type Standing = {
   episodeId: string;
@@ -30,7 +30,12 @@ export type Match = {
   bId: string;
 };
 
-export type TournamentPhase = "swiss" | "doubleDown" | "final" | "results";
+export type TournamentPhase =
+  | "swiss"
+  | "doubleDown"
+  | "knockout"
+  | "final"
+  | "results";
 
 export type FinalStage = "semifinals" | "championship";
 

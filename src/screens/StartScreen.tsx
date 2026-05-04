@@ -72,6 +72,10 @@ function getMatchupEstimate(
     return `${matchups}`;
   }
 
+  if (mode === "knockout") {
+    return `${poolSize - 1}`;
+  }
+
   const doubleDownEstimates: Record<number, string> = {
     16: "31",
     32: "63",

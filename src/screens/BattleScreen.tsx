@@ -140,6 +140,10 @@ function getTournamentTitle(tournament: TournamentState): string {
     return `Double Down Round ${tournament.currentRound}`;
   }
 
+  if (tournament.phase === "knockout") {
+    return `Knockout Round ${tournament.currentRound}`;
+  }
+
   if (tournament.phase === "final" && tournament.finalStage === "semifinals") {
     return "Final 4 - Semifinals";
   }
@@ -155,7 +159,7 @@ function getProgressText(tournament: TournamentState): string {
   const matchNumber = tournament.currentMatchIndex + 1;
   const totalMatches = tournament.currentMatches.length;
 
-  if (tournament.phase === "doubleDown") {
+  if (tournament.phase === "doubleDown" || tournament.phase === "knockout") {
     const activeCount = getActiveCount(tournament);
 
     return `Match ${matchNumber}/${totalMatches} • ${activeCount} alive`;
