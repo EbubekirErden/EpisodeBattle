@@ -242,11 +242,20 @@ export const styles = StyleSheet.create({
   ghostButton: {
     paddingVertical: 8,
     alignItems: "center",
+    borderRadius: 12,
   },
 
   ghostButtonText: {
     color: colors.muted,
     fontWeight: "900",
+  },
+
+  ghostButtonConfirming: {
+    backgroundColor: colors.dangerSurface,
+  },
+
+  ghostButtonTextConfirming: {
+    color: colors.danger,
   },
 
   sectionTitle: {

@@ -14,4 +14,5 @@ export const colors = {
   bottomGlowSurface: "#321a10",
 
   danger: "#ef4444",
+  dangerSurface: "#2a1518",
 };

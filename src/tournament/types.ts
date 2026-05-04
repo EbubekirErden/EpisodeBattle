@@ -22,6 +22,7 @@ export type Standing = {
   opponents: string[];
   beatenOpponents: string[];
   seedScore: number;
+  drawOrder: number;
 };
 
 export type Match = {

@@ -18,17 +18,19 @@ export function createTournament(
   poolSize: number,
   mode: TournamentMode
 ): TournamentState {
-  const selectedEpisodes = [...episodes]
-    .filter(isPlayableEpisode)
-    .sort((a, b) => b.seedScore - a.seedScore)
-    .slice(0, poolSize);
+  const selectedEpisodes = shuffleEpisodes(
+    [...episodes]
+      .filter(isPlayableEpisode)
+      .sort((a, b) => b.seedScore - a.seedScore)
+      .slice(0, poolSize)
+  );
 
   const actualPoolSize = selectedEpisodes.length;
   const episodeIds = selectedEpisodes.map((episode) => episode.id);
 
   const standings: Record<string, Standing> = {};
 
-  for (const episode of selectedEpisodes) {
+  selectedEpisodes.forEach((episode, drawOrder) => {
     standings[episode.id] = {
       episodeId: episode.id,
       wins: 0,
@@ -36,8 +38,9 @@ export function createTournament(
       opponents: [],
       beatenOpponents: [],
       seedScore: episode.seedScore,
+      drawOrder,
     };
-  }
+  });
 
   const initialState: TournamentState = {
     mode,
@@ -311,7 +314,7 @@ export function rankEpisodes(state: TournamentState): string[] {
 }
 
 function generateSwissMatches(state: TournamentState): Match[] {
-  const sortedIds = rankEpisodes(state);
+  const sortedIds = rankEpisodesForPairing(state);
   return pairEpisodeIds(sortedIds, state);
 }
 
@@ -325,10 +328,29 @@ function generateDoubleDownMatches(state: TournamentState): Match[] {
     if (a.losses !== b.losses) return a.losses - b.losses;
     if (b.wins !== a.wins) return b.wins - a.wins;
 
-    return b.seedScore - a.seedScore;
+    return a.drawOrder - b.drawOrder;
   });
 
   return pairEpisodeIds(sortedActiveIds, state);
+}
+
+function rankEpisodesForPairing(state: TournamentState): string[] {
+  return [...state.episodeIds].sort((aId, bId) => {
+    const a = state.standings[aId];
+    const b = state.standings[bId];
+
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    if (a.losses !== b.losses) return a.losses - b.losses;
+
+    const bOpponentStrength = getOpponentStrength(b, state.standings);
+    const aOpponentStrength = getOpponentStrength(a, state.standings);
+
+    if (bOpponentStrength !== aOpponentStrength) {
+      return bOpponentStrength - aOpponentStrength;
+    }
+
+    return a.drawOrder - b.drawOrder;
+  });
 }
 
 function pairEpisodeIds(ids: string[], state: TournamentState): Match[] {
@@ -389,7 +411,7 @@ function findBestOpponent(
       return bWinDiff - cWinDiff;
     }
 
-    return c.seedScore - b.seedScore;
+    return b.drawOrder - c.drawOrder;
   });
 
   return sortedCandidates[0] ?? null;
@@ -451,4 +473,18 @@ function cloneStandings(
 
 function isPlayableEpisode(episode: Episode): boolean {
   return Boolean(episode.image);
+}
+
+function shuffleEpisodes(episodes: Episode[]): Episode[] {
+  const shuffled = [...episodes];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    const current = shuffled[index];
+
+    shuffled[index] = shuffled[randomIndex];
+    shuffled[randomIndex] = current;
+  }
+
+  return shuffled;
 }

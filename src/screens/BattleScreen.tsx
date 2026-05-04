@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
 import { EpisodeCard } from "@/components/EpisodeCard";
@@ -32,6 +33,9 @@ export function BattleScreen({
   onRestart,
   onNewTournament,
 }: BattleScreenProps) {
+  const [isConfirmingNewTournament, setIsConfirmingNewTournament] =
+    useState(false);
+
   const currentMatch = getCurrentMatch(tournament);
 
   if (!currentMatch) {
@@ -61,7 +65,10 @@ export function BattleScreen({
       <EpisodeCard
         episode={topEpisode}
         variant="top"
-        onPress={() => onVote(topEpisode.id)}
+        onPress={() => {
+          setIsConfirmingNewTournament(false);
+          onVote(topEpisode.id);
+        }}
       />
 
       <Text style={styles.vs}>VS</Text>
@@ -69,7 +76,10 @@ export function BattleScreen({
       <EpisodeCard
         episode={bottomEpisode}
         variant="bottom"
-        onPress={() => onVote(bottomEpisode.id)}
+        onPress={() => {
+          setIsConfirmingNewTournament(false);
+          onVote(bottomEpisode.id);
+        }}
       />
 
       <View style={styles.footer}>
@@ -82,14 +92,39 @@ export function BattleScreen({
             styles.secondaryButton,
             historyLength === 0 && styles.disabled,
           ]}
-          onPress={onUndo}
+          onPress={() => {
+            setIsConfirmingNewTournament(false);
+            onUndo();
+          }}
           disabled={historyLength === 0}
         >
           <Text style={styles.secondaryButtonText}>Undo</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.ghostButton} onPress={onNewTournament}>
-          <Text style={styles.ghostButtonText}>New Tournament</Text>
+        <TouchableOpacity
+          style={[
+            styles.ghostButton,
+            isConfirmingNewTournament && styles.ghostButtonConfirming,
+          ]}
+          onPress={() => {
+            if (isConfirmingNewTournament) {
+              onNewTournament();
+              return;
+            }
+
+            setIsConfirmingNewTournament(true);
+          }}
+        >
+          <Text
+            style={[
+              styles.ghostButtonText,
+              isConfirmingNewTournament && styles.ghostButtonTextConfirming,
+            ]}
+          >
+            {isConfirmingNewTournament
+              ? "Tap again to start new tournament"
+              : "New Tournament"}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
