@@ -1,176 +1,240 @@
 import { StyleSheet } from "react-native";
 
+import { colors } from "@/styles/colors";
+
 export const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#101418",
+    backgroundColor: colors.background,
     padding: 18,
   },
+
   appTitle: {
-    color: "#f4f4f4",
-    fontSize: 28,
-    fontWeight: "800",
+    color: colors.text,
+    fontSize: 30,
+    fontWeight: "900",
     textAlign: "center",
     marginTop: 8,
+    letterSpacing: 0.5,
   },
+
   roundTitle: {
-    color: "#b8c0cc",
-    fontSize: 16,
+    color: colors.accent,
+    fontSize: 15,
     textAlign: "center",
     marginTop: 6,
     marginBottom: 14,
+    fontWeight: "800",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
   },
+
   poolSelector: {
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
     marginBottom: 14,
   },
+
   poolButton: {
     borderWidth: 1,
-    borderColor: "#3b4652",
+    borderColor: colors.border,
     borderRadius: 999,
     paddingVertical: 8,
     paddingHorizontal: 14,
+    backgroundColor: colors.surface,
   },
+
   poolButtonActive: {
-    backgroundColor: "#f4f4f4",
-    borderColor: "#f4f4f4",
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
   },
+
   poolButtonText: {
-    color: "#d6dbe2",
-    fontWeight: "700",
+    color: colors.muted,
+    fontWeight: "800",
   },
+
   poolButtonTextActive: {
-    color: "#101418",
+    color: colors.background,
   },
+
   card: {
     flex: 1,
-    backgroundColor: "#1b232d",
-    borderRadius: 24,
+    backgroundColor: colors.surface,
+    borderRadius: 26,
     borderWidth: 1,
-    borderColor: "#34404d",
+    borderColor: colors.border,
     padding: 22,
     justifyContent: "center",
     alignItems: "center",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    elevation: 4,
   },
+
+  topCard: {
+    borderColor: colors.topAccent,
+  },
+
+  bottomCard: {
+    borderColor: colors.bottomAccent,
+  },
+
   cardLabel: {
-    color: "#9fb0c3",
+    color: colors.muted,
     fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 1.5,
+    fontWeight: "900",
+    letterSpacing: 1.6,
     marginBottom: 18,
   },
+
+  topCardLabel: {
+    color: colors.topAccent,
+  },
+
+  bottomCardLabel: {
+    color: colors.bottomAccent,
+  },
+
   episodeCode: {
-    color: "#ffffff",
+    color: colors.text,
     fontSize: 24,
     fontWeight: "900",
     marginBottom: 8,
   },
+
   episodeTitle: {
-    color: "#f4f4f4",
+    color: colors.text,
     fontSize: 28,
-    fontWeight: "800",
+    fontWeight: "900",
     textAlign: "center",
   },
+
   vs: {
-    color: "#ffffff",
-    fontSize: 18,
+    color: colors.accent,
+    fontSize: 22,
     fontWeight: "900",
     textAlign: "center",
     marginVertical: 10,
+    letterSpacing: 2,
   },
+
   footer: {
     marginTop: 14,
     gap: 10,
   },
+
   progressText: {
-    color: "#9fb0c3",
+    color: colors.muted,
     textAlign: "center",
-    fontWeight: "700",
+    fontWeight: "800",
   },
+
   secondaryButton: {
     borderWidth: 1,
-    borderColor: "#586575",
+    borderColor: colors.border,
     paddingVertical: 12,
     borderRadius: 14,
     alignItems: "center",
+    backgroundColor: colors.surface,
   },
+
   secondaryButtonText: {
-    color: "#f4f4f4",
-    fontWeight: "800",
+    color: colors.text,
+    fontWeight: "900",
   },
+
   disabled: {
     opacity: 0.4,
   },
+
   primaryButton: {
-    backgroundColor: "#f4f4f4",
+    backgroundColor: colors.accent,
     paddingVertical: 14,
     borderRadius: 16,
     alignItems: "center",
     marginTop: 16,
   },
+
   primaryButtonText: {
-    color: "#101418",
+    color: colors.background,
     fontWeight: "900",
     fontSize: 16,
   },
+
   sectionTitle: {
-    color: "#f4f4f4",
+    color: colors.text,
     fontSize: 20,
-    fontWeight: "800",
+    fontWeight: "900",
     marginTop: 20,
     marginBottom: 12,
   },
+
   championBox: {
-    backgroundColor: "#1b232d",
-    borderRadius: 22,
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: 24,
     padding: 22,
     borderWidth: 1,
-    borderColor: "#34404d",
+    borderColor: colors.accent,
     marginTop: 24,
   },
+
   label: {
-    color: "#9fb0c3",
-    fontWeight: "800",
+    color: colors.accent,
+    fontWeight: "900",
     marginBottom: 8,
     textTransform: "uppercase",
+    letterSpacing: 1,
   },
+
   championTitle: {
-    color: "#ffffff",
+    color: colors.text,
     fontSize: 24,
     fontWeight: "900",
   },
+
   resultsList: {
     flex: 1,
   },
+
   resultRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#1b232d",
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#34404d",
+    borderColor: colors.border,
   },
+
   rank: {
-    color: "#ffffff",
+    color: colors.accent,
     width: 48,
     fontSize: 18,
     fontWeight: "900",
   },
+
   resultTextBox: {
     flex: 1,
   },
+
   resultTitle: {
-    color: "#f4f4f4",
-    fontWeight: "800",
+    color: colors.text,
+    fontWeight: "900",
     fontSize: 15,
   },
+
   resultSub: {
-    color: "#9fb0c3",
+    color: colors.muted,
     marginTop: 4,
-    fontWeight: "700",
+    fontWeight: "800",
   },
 });
