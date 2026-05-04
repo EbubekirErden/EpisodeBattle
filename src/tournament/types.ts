@@ -6,6 +6,8 @@ export type Episode = {
   seedScore: number;
 };
 
+export type TournamentMode = "swiss" | "doubleDown";
+
 export type Standing = {
   episodeId: string;
   wins: number;
@@ -20,16 +22,19 @@ export type Match = {
   bId: string;
 };
 
-export type TournamentPhase = "setup" | "swiss" | "final" | "results";
+export type TournamentPhase = "swiss" | "doubleDown" | "final" | "results";
 
 export type FinalStage = "semifinals" | "championship";
 
 export type TournamentState = {
+  mode: TournamentMode;
   phase: TournamentPhase;
 
   poolSize: number;
   maxSwissRounds: number;
-  currentSwissRound: number;
+  currentRound: number;
+
+  eliminationLosses: number;
 
   episodeIds: string[];
   standings: Record<string, Standing>;

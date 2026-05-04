@@ -2,8 +2,11 @@ import {
   Episode,
   Match,
   Standing,
+  TournamentMode,
   TournamentState,
-} from "./types";
+} from "@/tournament/types";
+
+const DOUBLE_DOWN_LOSSES = 2;
 
 function getMaxSwissRounds(poolSize: number): number {
   if (poolSize <= 16) return 4;
@@ -12,12 +15,14 @@ function getMaxSwissRounds(poolSize: number): number {
 
 export function createTournament(
   episodes: Episode[],
-  poolSize: number
+  poolSize: number,
+  mode: TournamentMode
 ): TournamentState {
   const selectedEpisodes = [...episodes]
     .sort((a, b) => b.seedScore - a.seedScore)
     .slice(0, poolSize);
 
+  const actualPoolSize = selectedEpisodes.length;
   const episodeIds = selectedEpisodes.map((episode) => episode.id);
 
   const standings: Record<string, Standing> = {};
@@ -34,10 +39,14 @@ export function createTournament(
   }
 
   const initialState: TournamentState = {
-    phase: "swiss",
-    poolSize,
-    maxSwissRounds: getMaxSwissRounds(poolSize),
-    currentSwissRound: 1,
+    mode,
+    phase: mode,
+
+    poolSize: actualPoolSize,
+    maxSwissRounds: getMaxSwissRounds(actualPoolSize),
+    currentRound: 1,
+
+    eliminationLosses: DOUBLE_DOWN_LOSSES,
 
     episodeIds,
     standings,
@@ -53,12 +62,19 @@ export function createTournament(
 
   return {
     ...initialState,
-    currentMatches: generateSwissMatches(initialState),
+    currentMatches:
+      mode === "swiss"
+        ? generateSwissMatches(initialState)
+        : generateDoubleDownMatches(initialState),
   };
 }
 
 export function getCurrentMatch(state: TournamentState): Match | null {
-  if (state.phase !== "swiss" && state.phase !== "final") {
+  if (
+    state.phase !== "swiss" &&
+    state.phase !== "doubleDown" &&
+    state.phase !== "final"
+  ) {
     return null;
   }
 
@@ -81,6 +97,10 @@ export function voteForWinner(
     return handleSwissVote(state, winnerId, loserId);
   }
 
+  if (state.phase === "doubleDown") {
+    return handleDoubleDownVote(state, winnerId, loserId);
+  }
+
   return handleFinalVote(state, winnerId);
 }
 
@@ -89,57 +109,92 @@ function handleSwissVote(
   winnerId: string,
   loserId: string
 ): TournamentState {
-  const standings = cloneStandings(state.standings);
+  const standings = applyMatchResult(state.standings, winnerId, loserId);
 
-  standings[winnerId].wins += 1;
-  standings[winnerId].opponents.push(loserId);
-  standings[winnerId].beatenOpponents.push(loserId);
-
-  standings[loserId].losses += 1;
-  standings[loserId].opponents.push(winnerId);
+  const afterVoteState: TournamentState = {
+    ...state,
+    standings,
+  };
 
   const nextMatchIndex = state.currentMatchIndex + 1;
 
   if (nextMatchIndex < state.currentMatches.length) {
     return {
-      ...state,
-      standings,
+      ...afterVoteState,
       currentMatchIndex: nextMatchIndex,
     };
   }
 
-  const nextRound = state.currentSwissRound + 1;
+  if (state.currentRound >= state.maxSwissRounds) {
+    return startFinals(afterVoteState);
+  }
 
-  if (nextRound <= state.maxSwissRounds) {
-    const nextState: TournamentState = {
-      ...state,
-      standings,
-      currentSwissRound: nextRound,
-      currentMatchIndex: 0,
-    };
+  const nextRoundState: TournamentState = {
+    ...afterVoteState,
+    currentRound: state.currentRound + 1,
+    currentMatchIndex: 0,
+  };
 
+  return {
+    ...nextRoundState,
+    currentMatches: generateSwissMatches(nextRoundState),
+  };
+}
+
+function handleDoubleDownVote(
+  state: TournamentState,
+  winnerId: string,
+  loserId: string
+): TournamentState {
+  const standings = applyMatchResult(state.standings, winnerId, loserId);
+
+  const afterVoteState: TournamentState = {
+    ...state,
+    standings,
+  };
+
+  const nextMatchIndex = state.currentMatchIndex + 1;
+
+  if (nextMatchIndex < state.currentMatches.length) {
     return {
-      ...nextState,
-      currentMatches: generateSwissMatches(nextState),
+      ...afterVoteState,
+      currentMatchIndex: nextMatchIndex,
     };
   }
 
-  return startFinals({
-    ...state,
-    standings,
-  });
+  const activeIds = getActiveEpisodeIds(afterVoteState);
+
+  if (activeIds.length <= 4) {
+    return startFinals(afterVoteState);
+  }
+
+  const nextRoundState: TournamentState = {
+    ...afterVoteState,
+    currentRound: state.currentRound + 1,
+    currentMatchIndex: 0,
+  };
+
+  const nextMatches = generateDoubleDownMatches(nextRoundState);
+
+  if (nextMatches.length === 0) {
+    return startFinals(nextRoundState);
+  }
+
+  return {
+    ...nextRoundState,
+    currentMatches: nextMatches,
+  };
 }
 
 function handleFinalVote(
   state: TournamentState,
   winnerId: string
 ): TournamentState {
-  const nextMatchIndex = state.currentMatchIndex + 1;
-
   if (state.finalStage === "semifinals") {
     const semifinalWinners = [...state.semifinalWinners, winnerId];
+    const nextMatchIndex = state.currentMatchIndex + 1;
 
-    if (semifinalWinners.length < 2) {
+    if (nextMatchIndex < state.currentMatches.length) {
       return {
         ...state,
         semifinalWinners,
@@ -169,7 +224,49 @@ function handleFinalVote(
 }
 
 function startFinals(state: TournamentState): TournamentState {
-  const finalists = rankEpisodes(state).slice(0, 4);
+  const rankedIds = rankEpisodes(state);
+
+  const activeFinalists = rankedIds.filter((episodeId) =>
+    isActiveEpisode(state, episodeId)
+  );
+
+  const backupFinalists = rankedIds.filter(
+    (episodeId) => !activeFinalists.includes(episodeId)
+  );
+
+  const finalists = [...activeFinalists, ...backupFinalists].slice(0, 4);
+
+  if (finalists.length <= 1) {
+    return {
+      ...state,
+      phase: "results",
+      championId: finalists[0] ?? null,
+    };
+  }
+
+  if (finalists.length === 2) {
+    return {
+      ...state,
+      phase: "final",
+      finalStage: "championship",
+      finalists,
+      semifinalWinners: [],
+      currentMatches: [{ aId: finalists[0], bId: finalists[1] }],
+      currentMatchIndex: 0,
+    };
+  }
+
+  if (finalists.length === 3) {
+    return {
+      ...state,
+      phase: "final",
+      finalStage: "semifinals",
+      finalists,
+      semifinalWinners: [finalists[0]],
+      currentMatches: [{ aId: finalists[1], bId: finalists[2] }],
+      currentMatchIndex: 0,
+    };
+  }
 
   return {
     ...state,
@@ -178,14 +275,8 @@ function startFinals(state: TournamentState): TournamentState {
     finalists,
     semifinalWinners: [],
     currentMatches: [
-      {
-        aId: finalists[0],
-        bId: finalists[3],
-      },
-      {
-        aId: finalists[1],
-        bId: finalists[2],
-      },
+      { aId: finalists[0], bId: finalists[3] },
+      { aId: finalists[1], bId: finalists[2] },
     ],
     currentMatchIndex: 0,
   };
@@ -196,7 +287,16 @@ export function rankEpisodes(state: TournamentState): string[] {
     const a = state.standings[aId];
     const b = state.standings[bId];
 
+    const aActive = isActiveEpisode(state, aId);
+    const bActive = isActiveEpisode(state, bId);
+
+    if (state.mode === "doubleDown" && aActive !== bActive) {
+      return aActive ? -1 : 1;
+    }
+
     if (b.wins !== a.wins) return b.wins - a.wins;
+
+    if (a.losses !== b.losses) return a.losses - b.losses;
 
     const bOpponentStrength = getOpponentStrength(b, state.standings);
     const aOpponentStrength = getOpponentStrength(a, state.standings);
@@ -211,7 +311,33 @@ export function rankEpisodes(state: TournamentState): string[] {
 
 function generateSwissMatches(state: TournamentState): Match[] {
   const sortedIds = rankEpisodes(state);
-  const unpaired = new Set(sortedIds);
+  return pairEpisodeIds(sortedIds, state);
+}
+
+function generateDoubleDownMatches(state: TournamentState): Match[] {
+  const activeIds = getActiveEpisodeIds(state);
+
+  const sortedActiveIds = activeIds.sort((aId, bId) => {
+    const a = state.standings[aId];
+    const b = state.standings[bId];
+
+    if (a.losses !== b.losses) return a.losses - b.losses;
+    if (b.wins !== a.wins) return b.wins - a.wins;
+
+    return b.seedScore - a.seedScore;
+  });
+
+  return pairEpisodeIds(sortedActiveIds, state);
+}
+
+function pairEpisodeIds(ids: string[], state: TournamentState): Match[] {
+  const idsForPairing = [...ids];
+
+  if (idsForPairing.length % 2 === 1) {
+    idsForPairing.pop();
+  }
+
+  const unpaired = new Set(idsForPairing);
   const matches: Match[] = [];
 
   while (unpaired.size > 1) {
@@ -220,16 +346,11 @@ function generateSwissMatches(state: TournamentState): Match[] {
 
     const bId = findBestOpponent(aId, [...unpaired], state);
 
-    if (!bId) {
-      break;
-    }
+    if (!bId) break;
 
     unpaired.delete(bId);
 
-    matches.push({
-      aId,
-      bId,
-    });
+    matches.push({ aId, bId });
   }
 
   return matches;
@@ -253,6 +374,13 @@ function findBestOpponent(
       return bHasPlayed ? 1 : -1;
     }
 
+    const bLossDiff = Math.abs(a.losses - b.losses);
+    const cLossDiff = Math.abs(a.losses - c.losses);
+
+    if (bLossDiff !== cLossDiff) {
+      return bLossDiff - cLossDiff;
+    }
+
     const bWinDiff = Math.abs(a.wins - b.wins);
     const cWinDiff = Math.abs(a.wins - c.wins);
 
@@ -264,6 +392,35 @@ function findBestOpponent(
   });
 
   return sortedCandidates[0] ?? null;
+}
+
+function applyMatchResult(
+  standings: Record<string, Standing>,
+  winnerId: string,
+  loserId: string
+): Record<string, Standing> {
+  const copy = cloneStandings(standings);
+
+  copy[winnerId].wins += 1;
+  copy[winnerId].opponents.push(loserId);
+  copy[winnerId].beatenOpponents.push(loserId);
+
+  copy[loserId].losses += 1;
+  copy[loserId].opponents.push(winnerId);
+
+  return copy;
+}
+
+function getActiveEpisodeIds(state: TournamentState): string[] {
+  return state.episodeIds.filter((episodeId) =>
+    isActiveEpisode(state, episodeId)
+  );
+}
+
+function isActiveEpisode(state: TournamentState, episodeId: string): boolean {
+  if (state.mode !== "doubleDown") return true;
+
+  return state.standings[episodeId].losses < state.eliminationLosses;
 }
 
 function getOpponentStrength(

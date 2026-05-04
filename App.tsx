@@ -4,16 +4,18 @@ import { EPISODES } from "@/data/doctorwho/episodes";
 import { BattleScreen } from "@/screens/BattleScreen";
 import { ResultsScreen } from "@/screens/ResultsScreen";
 import { createTournament, voteForWinner } from "@/tournament/engine";
-import { Episode, TournamentState } from "@/tournament/types";
+import { Episode, TournamentMode, TournamentState } from "@/tournament/types";
 
-const POOL_SIZES = [16, 32, 64];
+const POOL_SIZES = [16, 32, 64, 128];
 const DEFAULT_POOL_SIZE = 16;
+const DEFAULT_MODE: TournamentMode = "swiss";
 
 export default function App() {
   const [poolSize, setPoolSize] = useState(DEFAULT_POOL_SIZE);
+  const [mode, setMode] = useState<TournamentMode>(DEFAULT_MODE);
 
   const [tournament, setTournament] = useState<TournamentState>(() =>
-    createTournament(EPISODES, DEFAULT_POOL_SIZE)
+    createTournament(EPISODES, DEFAULT_POOL_SIZE, DEFAULT_MODE)
   );
 
   const [history, setHistory] = useState<TournamentState[]>([]);
@@ -28,9 +30,10 @@ export default function App() {
     return map;
   }, []);
 
-  function restart(size = poolSize) {
-    setPoolSize(size);
-    setTournament(createTournament(EPISODES, size));
+  function restart(nextPoolSize = poolSize, nextMode = mode) {
+    setPoolSize(nextPoolSize);
+    setMode(nextMode);
+    setTournament(createTournament(EPISODES, nextPoolSize, nextMode));
     setHistory([]);
   }
 
@@ -41,9 +44,7 @@ export default function App() {
 
   function undo() {
     setHistory((previous) => {
-      if (previous.length === 0) {
-        return previous;
-      }
+      if (previous.length === 0) return previous;
 
       const lastState = previous[previous.length - 1];
       setTournament(lastState);
@@ -68,6 +69,7 @@ export default function App() {
       episodeById={episodeById}
       poolSize={poolSize}
       poolSizes={POOL_SIZES}
+      mode={mode}
       historyLength={history.length}
       onVote={handleVote}
       onUndo={undo}

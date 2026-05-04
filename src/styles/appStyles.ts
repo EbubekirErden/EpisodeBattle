@@ -237,4 +237,34 @@ export const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: "800",
   },
+
+  modeSelector: {
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    marginBottom: 14,
+  },
+
+  modeButton: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    backgroundColor: colors.surface,
+  },
+
+  modeButtonActive: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+
+  modeButtonText: {
+    color: colors.muted,
+    fontWeight: "900",
+  },
+
+  modeButtonTextActive: {
+    color: colors.background,
+  },
 });

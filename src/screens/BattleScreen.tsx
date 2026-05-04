@@ -1,20 +1,26 @@
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
 import { EpisodeCard } from "@/components/EpisodeCard";
+import { ModeSelector } from "@/components/ModeSelector";
 import { PoolSelector } from "@/components/PoolSelector";
 import { styles } from "@/styles/appStyles";
-import { Episode, TournamentState } from "@/tournament/types";
 import { getCurrentMatch } from "@/tournament/engine";
+import {
+  Episode,
+  TournamentMode,
+  TournamentState,
+} from "@/tournament/types";
 
 type BattleScreenProps = {
   tournament: TournamentState;
   episodeById: Record<string, Episode>;
   poolSize: number;
   poolSizes: number[];
+  mode: TournamentMode;
   historyLength: number;
   onVote: (winnerId: string) => void;
   onUndo: () => void;
-  onRestart: (poolSize?: number) => void;
+  onRestart: (poolSize?: number, mode?: TournamentMode) => void;
 };
 
 export function BattleScreen({
@@ -22,6 +28,7 @@ export function BattleScreen({
   episodeById,
   poolSize,
   poolSizes,
+  mode,
   historyLength,
   onVote,
   onUndo,
@@ -37,7 +44,7 @@ export function BattleScreen({
 
         <TouchableOpacity
           style={styles.primaryButton}
-          onPress={() => onRestart()}
+          onPress={() => onRestart(poolSize, mode)}
         >
           <Text style={styles.primaryButtonText}>Restart</Text>
         </TouchableOpacity>
@@ -56,7 +63,12 @@ export function BattleScreen({
       <PoolSelector
         poolSizes={poolSizes}
         selectedPoolSize={poolSize}
-        onSelectSize={onRestart}
+        onSelectSize={(nextPoolSize) => onRestart(nextPoolSize, mode)}
+      />
+
+      <ModeSelector
+        selectedMode={mode}
+        onSelectMode={(nextMode) => onRestart(poolSize, nextMode)}
       />
 
       <EpisodeCard
@@ -77,12 +89,14 @@ export function BattleScreen({
 
       <View style={styles.footer}>
         <Text style={styles.progressText}>
-          Match {tournament.currentMatchIndex + 1}/
-          {tournament.currentMatches.length}
+          {getProgressText(tournament)}
         </Text>
 
         <TouchableOpacity
-          style={[styles.secondaryButton, historyLength === 0 && styles.disabled]}
+          style={[
+            styles.secondaryButton,
+            historyLength === 0 && styles.disabled,
+          ]}
           onPress={onUndo}
           disabled={historyLength === 0}
         >
@@ -95,7 +109,11 @@ export function BattleScreen({
 
 function getTournamentTitle(tournament: TournamentState): string {
   if (tournament.phase === "swiss") {
-    return `Swiss Round ${tournament.currentSwissRound}/${tournament.maxSwissRounds}`;
+    return `Swiss Round ${tournament.currentRound}/${tournament.maxSwissRounds}`;
+  }
+
+  if (tournament.phase === "doubleDown") {
+    return `Double Down Round ${tournament.currentRound}`;
   }
 
   if (tournament.phase === "final" && tournament.finalStage === "semifinals") {
@@ -107,4 +125,25 @@ function getTournamentTitle(tournament: TournamentState): string {
   }
 
   return "Episode Battle";
+}
+
+function getProgressText(tournament: TournamentState): string {
+  const matchNumber = tournament.currentMatchIndex + 1;
+  const totalMatches = tournament.currentMatches.length;
+
+  if (tournament.phase === "doubleDown") {
+    const activeCount = getActiveCount(tournament);
+
+    return `Match ${matchNumber}/${totalMatches} • ${activeCount} alive`;
+  }
+
+  return `Match ${matchNumber}/${totalMatches}`;
+}
+
+function getActiveCount(tournament: TournamentState): number {
+  return tournament.episodeIds.filter((episodeId) => {
+    const standing = tournament.standings[episodeId];
+
+    return standing.losses < tournament.eliminationLosses;
+  }).length;
 }
