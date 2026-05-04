@@ -4,6 +4,10 @@ export type Episode = {
   season: number;
   episode: number;
   seedScore: number;
+  displayCode?: string;
+  imdbRating?: number;
+  imdbVotes?: number;
+  year?: number;
 };
 
 export type TournamentMode = "swiss" | "doubleDown";
