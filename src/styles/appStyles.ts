@@ -267,4 +267,34 @@ export const styles = StyleSheet.create({
   modeButtonTextActive: {
     color: colors.background,
   },
+
+  episodeImage: {
+    width: "100%",
+    height: "58%",
+    borderRadius: 18,
+    marginBottom: 14,
+    backgroundColor: colors.surfaceElevated,
+  },
+
+  imagePlaceholder: {
+    width: "100%",
+    height: "58%",
+    borderRadius: 18,
+    marginBottom: 14,
+    backgroundColor: colors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  imagePlaceholderText: {
+    color: colors.muted,
+    fontSize: 28,
+    fontWeight: "900",
+  },
+
+  cardTextBox: {
+    alignItems: "center",
+  },
 });

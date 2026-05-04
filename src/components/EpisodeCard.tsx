@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import { styles } from "@/styles/appStyles";
 import { Episode } from "@/tournament/types";
@@ -31,9 +31,21 @@ export function EpisodeCard({
       onPress={onPress}
       activeOpacity={0.85}
     >
-      <Text style={[styles.cardLabel, labelVariantStyle]}>{label} WINS</Text>
-      <Text style={styles.episodeCode}>{formatEpisodeCode(episode)}</Text>
-      <Text style={styles.episodeTitle}>{episode.title}</Text>
+      {episode.image ? (
+        <Image source={episode.image} style={styles.episodeImage} />
+      ) : (
+        <View style={styles.imagePlaceholder}>
+          <Text style={styles.imagePlaceholderText}>
+            {formatEpisodeCode(episode)}
+          </Text>
+        </View>
+      )}
+
+      <View style={styles.cardTextBox}>
+        <Text style={[styles.cardLabel, labelVariantStyle]}>{label} WINS</Text>
+        <Text style={styles.episodeCode}>{formatEpisodeCode(episode)}</Text>
+        <Text style={styles.episodeTitle}>{episode.title}</Text>
+      </View>
     </TouchableOpacity>
   );
 }

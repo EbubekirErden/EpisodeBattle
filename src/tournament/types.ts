@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from "react-native";
+
 export type Episode = {
   id: string;
   title: string;
@@ -8,6 +10,7 @@ export type Episode = {
   imdbRating?: number;
   imdbVotes?: number;
   year?: number;
+  image?: ImageSourcePropType;
 };
 
 export type TournamentMode = "swiss" | "doubleDown";
