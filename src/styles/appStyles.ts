@@ -93,6 +93,21 @@ export const styles = StyleSheet.create({
     marginTop: 4,
   },
 
+  modeInfoPanel: {
+    backgroundColor: colors.mutedSurface,
+    borderRadius: 14,
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+  },
+
+  modeInfoText: {
+    color: colors.subtle,
+    fontSize: 12,
+    fontWeight: "700",
+    lineHeight: 17,
+    textAlign: "center",
+  },
+
   poolSelector: {
     flexDirection: "row",
     flexWrap: "wrap",

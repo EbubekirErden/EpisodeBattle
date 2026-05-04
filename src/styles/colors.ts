@@ -2,10 +2,12 @@ export const colors = {
   background: "#0d1117",
   surface: "#161b22",
   surfaceElevated: "#1f2933",
+  mutedSurface: "#141a22",
   border: "#303b48",
 
   text: "#f4f4f5",
   muted: "#9ca3af",
+  subtle: "#727d8c",
 
   accent: "#f5b84b",
   topAccent: "#60a5fa",

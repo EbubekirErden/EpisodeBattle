@@ -46,6 +46,9 @@ export function StartScreen({
         <View style={styles.setupGroup}>
           <Text style={styles.setupLabel}>Mode</Text>
           <ModeSelector selectedMode={mode} onSelectMode={onSelectMode} />
+          <View style={styles.modeInfoPanel}>
+            <Text style={styles.modeInfoText}>{getModeInfo(mode)}</Text>
+          </View>
         </View>
 
         <View style={styles.matchupEstimateBox}>
@@ -84,4 +87,16 @@ function getMatchupEstimate(
   };
 
   return doubleDownEstimates[poolSize] ?? "Depends on eliminations";
+}
+
+function getModeInfo(mode: TournamentMode): string {
+  if (mode === "swiss") {
+    return "Fixed rounds, then the strongest four move to finals.";
+  }
+
+  if (mode === "knockout") {
+    return "Fast bracket. One loss and an episode is out.";
+  }
+
+  return "More forgiving bracket. Episodes are out after two losses.";
 }
