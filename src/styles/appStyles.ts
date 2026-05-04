@@ -1,0 +1,176 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: "#101418",
+    padding: 18,
+  },
+  appTitle: {
+    color: "#f4f4f4",
+    fontSize: 28,
+    fontWeight: "800",
+    textAlign: "center",
+    marginTop: 8,
+  },
+  roundTitle: {
+    color: "#b8c0cc",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 6,
+    marginBottom: 14,
+  },
+  poolSelector: {
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    marginBottom: 14,
+  },
+  poolButton: {
+    borderWidth: 1,
+    borderColor: "#3b4652",
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+  },
+  poolButtonActive: {
+    backgroundColor: "#f4f4f4",
+    borderColor: "#f4f4f4",
+  },
+  poolButtonText: {
+    color: "#d6dbe2",
+    fontWeight: "700",
+  },
+  poolButtonTextActive: {
+    color: "#101418",
+  },
+  card: {
+    flex: 1,
+    backgroundColor: "#1b232d",
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "#34404d",
+    padding: 22,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cardLabel: {
+    color: "#9fb0c3",
+    fontSize: 13,
+    fontWeight: "800",
+    letterSpacing: 1.5,
+    marginBottom: 18,
+  },
+  episodeCode: {
+    color: "#ffffff",
+    fontSize: 24,
+    fontWeight: "900",
+    marginBottom: 8,
+  },
+  episodeTitle: {
+    color: "#f4f4f4",
+    fontSize: 28,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  vs: {
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: "900",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  footer: {
+    marginTop: 14,
+    gap: 10,
+  },
+  progressText: {
+    color: "#9fb0c3",
+    textAlign: "center",
+    fontWeight: "700",
+  },
+  secondaryButton: {
+    borderWidth: 1,
+    borderColor: "#586575",
+    paddingVertical: 12,
+    borderRadius: 14,
+    alignItems: "center",
+  },
+  secondaryButtonText: {
+    color: "#f4f4f4",
+    fontWeight: "800",
+  },
+  disabled: {
+    opacity: 0.4,
+  },
+  primaryButton: {
+    backgroundColor: "#f4f4f4",
+    paddingVertical: 14,
+    borderRadius: 16,
+    alignItems: "center",
+    marginTop: 16,
+  },
+  primaryButtonText: {
+    color: "#101418",
+    fontWeight: "900",
+    fontSize: 16,
+  },
+  sectionTitle: {
+    color: "#f4f4f4",
+    fontSize: 20,
+    fontWeight: "800",
+    marginTop: 20,
+    marginBottom: 12,
+  },
+  championBox: {
+    backgroundColor: "#1b232d",
+    borderRadius: 22,
+    padding: 22,
+    borderWidth: 1,
+    borderColor: "#34404d",
+    marginTop: 24,
+  },
+  label: {
+    color: "#9fb0c3",
+    fontWeight: "800",
+    marginBottom: 8,
+    textTransform: "uppercase",
+  },
+  championTitle: {
+    color: "#ffffff",
+    fontSize: 24,
+    fontWeight: "900",
+  },
+  resultsList: {
+    flex: 1,
+  },
+  resultRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1b232d",
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#34404d",
+  },
+  rank: {
+    color: "#ffffff",
+    width: 48,
+    fontSize: 18,
+    fontWeight: "900",
+  },
+  resultTextBox: {
+    flex: 1,
+  },
+  resultTitle: {
+    color: "#f4f4f4",
+    fontWeight: "800",
+    fontSize: 15,
+  },
+  resultSub: {
+    color: "#9fb0c3",
+    marginTop: 4,
+    fontWeight: "700",
+  },
+});
