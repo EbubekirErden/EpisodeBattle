@@ -16,16 +16,20 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.ebubekirerden.episodebattle",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#071225"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.ebubekirerden.episodebattle"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "bf1b78d8-f90d-453c-95c1-384161b858b6"
+      }
     }
   }
 }
